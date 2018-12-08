@@ -35,18 +35,18 @@ class App extends Component {
     const { carouselImagesLoaded, carouselImages } = this.state;
     return (
       <div className="App">
-        <Carousel>
-          { carouselImagesLoaded && carouselImages.length ? (
-            carouselImages.map((image, i) => {
-             // Return the element. Also pass key
-             return (
+        { carouselImagesLoaded && carouselImages.length ? (
+          <Carousel>
+            { carouselImages.map((image, i) => {
+              // Return the element. Also pass key
+              return (
                <CarouselSlide key={i} id={i} imageSrc={image.largeImageURL} imageTitle={image.user}/>
-             )
-            })
-          ) : (
-            <p>No images found</p>
-          )}
-        </Carousel>
+              )
+            }) }
+          </Carousel>
+        ) : (
+          <p>No images found</p>
+        )}
       </div>
     );
   }

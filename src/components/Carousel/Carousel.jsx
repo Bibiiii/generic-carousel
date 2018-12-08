@@ -19,6 +19,7 @@ const CarouselSlideContainer = styled.div`
   flex: 1 0 100%;
   flex-basis: 250px;
   margin-right: 20px;
+  order: ${(props) => props.order};
   img {
     width: 100%;
   }
@@ -27,9 +28,33 @@ const CarouselSlideContainer = styled.div`
 class Carousel extends Component {
   constructor(props){
     super(props);
+
     this.state = {
-      slidePosition: 0
+      slidePosition: 0,
+      carouselLength: this.props.children.length
     }
+  }
+
+  getSlideOrder(slideIndex) {
+    const { slidePosition, carouselLength } = this.state
+    if (slideIndex - slidePosition < 0) {
+      return carouselLength - Math.abs(slideIndex - slidePosition)
+    }
+    return slideIndex - slidePosition
+  }
+
+  nextSlide = () => {
+    const { slidePosition, carouselLength } = this.state
+    this.setState({
+      slidePosition: slidePosition === carouselLength - 1 ? 0 : slidePosition + 1
+    })
+  }
+
+  prevSlide = () => {
+    const { slidePosition, carouselLength } = this.state
+    this.setState({
+      slidePosition: slidePosition === 0 ? carouselLength - 1 : slidePosition - 1
+    })
   }
 
   render() {
@@ -43,12 +68,15 @@ class Carousel extends Component {
             return (
               <CarouselSlideContainer
                 key={ i }
+                order={ app.getSlideOrder(i) }
               >
                 {child}
               </CarouselSlideContainer>
             )
           })}
         </CarouselContainer>
+        <button onClick={ () => this.prevSlide() }>Prev</button>
+        <button onClick={ () => this.nextSlide() }>Next</button>
       </CarouselWrapper>
     )
   }
