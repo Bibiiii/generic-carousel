@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import Carousel from './components/Carousel/Carousel'
+import Carousel from './components/Carousel/Carousel';
+import CarouselSlide from './components/Carousel/CarouselSlide';
 
 class App extends Component {
   constructor(props){
@@ -31,10 +32,20 @@ class App extends Component {
   }
 
   render() {
+    const { carouselImagesLoaded, carouselImages } = this.state;
     return (
       <div className="App">
         <Carousel>
-          <p>Test</p>
+          { carouselImagesLoaded && carouselImages.length ? (
+            carouselImages.map((image, i) => {
+             // Return the element. Also pass key
+             return (
+               <CarouselSlide key={i} id={i} imageSrc={image.largeImageURL} imageTitle={image.user}/>
+             )
+            })
+          ) : (
+            <p>No images found</p>
+          )}
         </Carousel>
       </div>
     );
