@@ -7,6 +7,7 @@ class Carousel extends Component {
     this.state = {
     }
   }
+
   render() {
     const { children } = this.props;
 
