@@ -2,26 +2,73 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-import CarouselSlide from './CarouselSlide'
-
 const CarouselWrapper = styled.div`
   width: 100%;
   overflow-x: hidden;
+  .buttonContainer {
+    width: 50%;
+    margin: 30px auto;
+    display: flex;
+    justify-content: space-around;
+    button {
+      font-family: 'Ropa Sans',sans-serif;
+      font-size: 20px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: #4C5E6A;
+      background-color: white;
+      padding: 5px 15px;
+      border: 1px solid #4C5E6A;
+      border-radius: 3px;
+      box-shadow: 0 1px 4px #dbdbdb;
+      transition: all .2s;
+      cursor: pointer;
+      &:hover {
+        background-color: #4C5E6A;
+        color: white;
+      }
+    }
+  }
 `;
 
 const CarouselContainer = styled.div`
   white-space: nowrap;
   display: flex;
-  margin: 0 0 20px 20px;
+  background: #f2f2f2;
+  position: relative;
+  padding: 20px;
+  @media (min-width: 500px) {
+    padding: 40px 20px 70px;
+  }
+  img.arrow {
+    position: absolute;
+    top: calc(50% - 31.3px);
+    cursor: pointer;
+    &.next {
+      right: 0;
+    }
+    &.previous {
+      left: 0;
+      -moz-transform: scaleX(-1);
+      -o-transform: scaleX(-1);
+      -webkit-transform: scaleX(-1);
+    }
+  }
+
 `;
 
 const CarouselSlideContainer = styled.div`
+  flex-basis: 100%;
   flex: 1 0 100%;
-  flex-basis: 250px;
-  margin-right: 20px;
   order: ${(props) => props.order};
+  margin-right: 20px;
+  @media (min-width: 500px) {
+    flex-basis: 350px;
+  }
   img {
     width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 `;
 
@@ -30,30 +77,35 @@ class Carousel extends Component {
     super(props);
 
     this.state = {
-      slidePosition: 0,
+      activeSlide: 0, // set as first slide in array
       carouselLength: this.props.children.length
     }
   }
 
   getSlideOrder(slideIndex) {
-    const { slidePosition, carouselLength } = this.state
-    if (slideIndex - slidePosition < 0) {
-      return carouselLength - Math.abs(slideIndex - slidePosition)
+    const { activeSlide, carouselLength } = this.state
+    if (slideIndex - activeSlide < 0) {
+      // attach slide back onto end of flexbox if it's a minus number
+      return carouselLength - Math.abs(slideIndex - activeSlide)
+    } else {
+      // position slide appropriate number of spaces in flexbox
+      return slideIndex - activeSlide
     }
-    return slideIndex - slidePosition
   }
 
   nextSlide = () => {
-    const { slidePosition, carouselLength } = this.state
+    const { activeSlide, carouselLength } = this.state;
+    // if active slide is last in array, set new active slide as 0, otherwise set new active slide as next slide
     this.setState({
-      slidePosition: slidePosition === carouselLength - 1 ? 0 : slidePosition + 1
+      activeSlide: activeSlide === carouselLength - 1 ? 0 : activeSlide + 1
     })
   }
 
   prevSlide = () => {
-    const { slidePosition, carouselLength } = this.state
+    const { activeSlide, carouselLength } = this.state;
+    // if active slide is first slide, set new active slide as last slide, otherwise set new active slide as previous slide
     this.setState({
-      slidePosition: slidePosition === 0 ? carouselLength - 1 : slidePosition - 1
+      activeSlide: activeSlide === 0 ? carouselLength - 1 : activeSlide - 1
     })
   }
 
@@ -63,7 +115,15 @@ class Carousel extends Component {
 
     return (
       <CarouselWrapper>
-        <CarouselContainer>
+        <CarouselContainer
+          ref={this.carousel}
+        >
+          <img
+            src="arrow.svg"
+            alt="previous"
+            className="arrow previous"
+            onClick={ () => this.prevSlide()}
+          />
           {React.Children.map(children, function(child, i) {
             return (
               <CarouselSlideContainer
@@ -74,9 +134,17 @@ class Carousel extends Component {
               </CarouselSlideContainer>
             )
           })}
+          <img
+            src="arrow.svg"
+            alt="next"
+            className="arrow next"
+            onClick={ () => this.nextSlide() }
+          />
         </CarouselContainer>
-        <button onClick={ () => this.prevSlide() }>Prev</button>
-        <button onClick={ () => this.nextSlide() }>Next</button>
+        <div className="buttonContainer">
+          <button onClick={ () => this.prevSlide() }>Prev</button>
+          <button onClick={ () => this.nextSlide() }>Next</button>
+        </div>
       </CarouselWrapper>
     )
   }

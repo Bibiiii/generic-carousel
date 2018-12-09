@@ -1,11 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
 
+const Slide = styled.div`
+  height: 100%;
+`;
+
 const CarouselSlide = (props) => {
   return (
-    <div id={props.id}>
+    <Slide id={props.id}>
       <img src={props.imageSrc} alt={props.imageTitle}/>
-    </div>
+      <h3>{props.imageTitle}</h3>
+    </Slide>
   )
 }
 
